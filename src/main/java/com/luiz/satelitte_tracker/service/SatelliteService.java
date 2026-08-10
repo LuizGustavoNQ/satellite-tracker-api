@@ -1,13 +1,13 @@
 package com.luiz.satelitte_tracker.service;
 
+import com.luiz.satelitte_tracker.websocket.SatelliteWebSocketHandler;
 import com.luiz.satelitte_tracker.dto.SatelliteResponse;
 import com.luiz.satelitte_tracker.model.SatellitePosition;
 import com.luiz.satelitte_tracker.model.TleData;
 import jakarta.annotation.PostConstruct;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.Instant;
 import java.util.List;
@@ -19,7 +19,8 @@ public class SatelliteService {
     private final TleParserService parser;
     private final OrbitService orbitService;
     private final SatellitePositionCache cache;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final SatelliteWebSocketHandler webSocketHandler;
+    private final ObjectMapper objectMapper;
 
     private volatile List<TleData> currentTles = List.of();
 
@@ -28,13 +29,15 @@ public class SatelliteService {
             TleParserService parser,
             OrbitService orbitService,
             SatellitePositionCache cache,
-            SimpMessagingTemplate messagingTemplate
+            SatelliteWebSocketHandler webSocketHandler,
+            ObjectMapper objectMapper
     ) {
         this.tleService = tleService;
         this.parser = parser;
         this.orbitService = orbitService;
         this.cache = cache;
-        this.messagingTemplate = messagingTemplate;
+        this.webSocketHandler = webSocketHandler;
+        this.objectMapper = objectMapper;
     }
 
     @PostConstruct
@@ -98,9 +101,14 @@ public class SatelliteService {
 
         cache.update(satellites);
 
-        messagingTemplate.convertAndSend(
-                "/topic/satellites",
-                satellites
-        );
+        try {
+            String json = objectMapper.writeValueAsString(satellites);
+            webSocketHandler.broadcast(json);
+        } catch (Exception e) {
+            System.out.println(
+                    "Erro ao enviar posições pelo WebSocket: "
+                            + e.getMessage()
+            );
+        }
     }
 }
