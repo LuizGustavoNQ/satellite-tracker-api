@@ -24,7 +24,7 @@ public class TleService {
 
         return celestrakClient
                 .get()
-                .uri("/NORAD/elements/gp.php?GROUP=stations&FORMAT=tle")
+                .uri("/NORAD/elements/gp.php?GROUP=active&FORMAT=tle")
                 .retrieve()
                 .body(String.class);
 
