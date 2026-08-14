@@ -1,7 +1,7 @@
 package com.luiz.satelitte_tracker.service;
 
 import com.luiz.satelitte_tracker.model.SatellitePosition;
-import com.luiz.satelitte_tracker.model.TleData;
+import com.luiz.satelitte_tracker.model.GpData;
 import org.orekit.bodies.GeodeticPoint;
 import org.orekit.bodies.OneAxisEllipsoid;
 import org.orekit.frames.Frame;
@@ -21,7 +21,7 @@ import java.time.Instant;
 @Service
 public class OrbitService {
 
-    public SatellitePosition calculate(TleData tle, Instant time) {
+    public SatellitePosition calculate(GpData tle, Instant time) {
 
         AbsoluteDate date = new AbsoluteDate(
                 time,

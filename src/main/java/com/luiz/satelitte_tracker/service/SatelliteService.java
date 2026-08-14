@@ -3,7 +3,7 @@ package com.luiz.satelitte_tracker.service;
 import com.luiz.satelitte_tracker.websocket.SatelliteWebSocketHandler;
 import com.luiz.satelitte_tracker.dto.SatelliteResponse;
 import com.luiz.satelitte_tracker.model.SatellitePosition;
-import com.luiz.satelitte_tracker.model.TleData;
+import com.luiz.satelitte_tracker.model.GpData;
 import jakarta.annotation.PostConstruct;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -15,18 +15,18 @@ import java.util.List;
 @Service
 public class SatelliteService {
 
-    private final TleService tleService;
-    private final TleParserService parser;
+    private final CelestrakService tleService;
+    private final GpDataParserService parser;
     private final OrbitService orbitService;
     private final SatellitePositionCache cache;
     private final SatelliteWebSocketHandler webSocketHandler;
     private final ObjectMapper objectMapper;
 
-    private volatile List<TleData> currentTles = List.of();
+    private volatile List<GpData> currentTles = List.of();
 
     public SatelliteService(
-            TleService tleService,
-            TleParserService parser,
+            CelestrakService tleService,
+            GpDataParserService parser,
             OrbitService orbitService,
             SatellitePositionCache cache,
             SatelliteWebSocketHandler webSocketHandler,
@@ -58,9 +58,9 @@ public class SatelliteService {
 
         try {
 
-            String content = tleService.getStationTle();
+            String content = tleService.getStationData();
 
-            List<TleData> newTles = parser.parse(content);
+            List<GpData> newTles = parser.parse(content);
 
             if (!newTles.isEmpty()) {
                 currentTles = newTles;

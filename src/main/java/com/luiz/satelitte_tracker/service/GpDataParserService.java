@@ -1,22 +1,22 @@
 package com.luiz.satelitte_tracker.service;
 
-import com.luiz.satelitte_tracker.model.TleData;
+import com.luiz.satelitte_tracker.model.GpData;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class TleParserService {
+public class GpDataParserService {
 
 
-    public List<TleData> parse(String content) {
+    public List<GpData> parse(String content) {
 
 
         String[] lines = content.split("\\r?\\n");
 
 
-        List<TleData> satellites = new ArrayList<>();
+        List<GpData> satellites = new ArrayList<>();
 
 
         for(int i = 0; i < lines.length - 2; i += 3){
@@ -30,7 +30,7 @@ public class TleParserService {
 
 
             satellites.add(
-                    new TleData(
+                    new GpData(
                             name,
                             lineOne,
                             lineTwo

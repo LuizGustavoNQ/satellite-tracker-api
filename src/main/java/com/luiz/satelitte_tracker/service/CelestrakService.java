@@ -1,33 +1,26 @@
 package com.luiz.satelitte_tracker.service;
 
-import com.luiz.satelitte_tracker.model.TleData;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-import java.util.List;
-
 @Service
-public class TleService {
-
+public class CelestrakService {
 
     private final RestClient celestrakClient;
 
-
-    public TleService(RestClient celestrakClient){
-
+    public CelestrakService(RestClient celestrakClient) {
         this.celestrakClient = celestrakClient;
-
     }
 
-
-    public String getStationTle(){
-
+    public String getStationData() {
         return celestrakClient
                 .get()
-                .uri("/NORAD/elements/gp.php?GROUP=active&FORMAT=tle")
+                .uri(uriBuilder -> uriBuilder
+                        .path("/NORAD/elements/gp.php")
+                        .queryParam("CATNR", 25544)
+                        .queryParam("FORMAT", "CSV")
+                        .build())
                 .retrieve()
                 .body(String.class);
-
     }
-
 }

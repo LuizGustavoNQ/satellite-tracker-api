@@ -1,6 +1,6 @@
 package com.luiz.satelitte_tracker.model;
 
-public record TleData(
+public record GpData(
 
         String satelliteName,
 
